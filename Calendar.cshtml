@@ -1,0 +1,2339 @@
+﻿@using System.Configuration
+@using System.Web.Mvc.Html
+@using Site.Extentions
+@using Site.Helper
+@model Site.Models.Salon.MasterCalendarModel
+@{
+    ViewBag.Title = "Calendar";
+    var generatedId = Guid.NewGuid();
+    Layout = "~/Views/Shared/_LayoutSalon.cshtml";
+}
+
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+<style type="text/css">
+        .hidden {
+            visibility: hidden;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0
+        }
+
+        .bookedByMaster {
+            color: #000 !important;
+        }
+
+        .working__add .wrap-inner {
+            box-shadow: none
+        }
+
+        .working__day {
+            margin-bottom: 0
+        }
+
+        #cancelbooked__popup .title-wpap {
+            width: 100%;
+            max-width: 346px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+            #cancelbooked__popup .title-wpap .top-title {
+                font-size: 16px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            #cancelbooked__popup .title-wpap .booked__time {
+                font-weight: 500;
+                font-size: 14px;
+                color: #EC405D;
+                margin-bottom: 10px;
+            }
+
+        #cancelbooked__popup .popup__form {
+            max-width: 508px;
+            height: 550px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-flow: column;
+            flex-flow: column;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+            #cancelbooked__popup .popup__form .btn {
+                max-width: 300px;
+                margin: 0 auto;
+                height: 44px;
+            }
+
+        #cancelbooked__popup .title-wpap {
+            width: 100%;
+            max-width: 346px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+            #cancelbooked__popup .title-wpap .top-title {
+                font-size: 16px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            #cancelbooked__popup .title-wpap .booked__time {
+                font-weight: 500;
+                font-size: 14px;
+                color: #EC405D;
+                margin-bottom: 10px;
+            }
+
+        #cancelbooked__popup .popup__form .working__add {
+            margin-top: 0
+        }
+
+        .details__popup .popup__form {
+            max-width: 596px;
+            padding: 20px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+
+        .details__popup .inner {
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .details__popup h6 {
+            width: 100%;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: baseline;
+            -ms-flex-align: baseline;
+            align-items: baseline;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            color: #4D4D4D;
+        }
+
+        .details__popup .master {
+            width: 100%;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+            .details__popup .master img {
+                width: 58px;
+                height: 58px;
+                margin-right: 14px;
+                border-radius: 50%;
+                -o-object-fit: cover;
+                object-fit: cover;
+            }
+
+        .details__popup .master__description {
+            width: 100%;
+            height: 58px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-flow: column;
+            flex-flow: column;
+            -webkit-box-pack: space-evenly;
+            -ms-flex-pack: space-evenly;
+            justify-content: space-evenly;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 17px;
+            color: #4D4D4D;
+        }
+
+        #detailbooked__popup .popup__form {
+            max-width: 508px;
+            height: auto;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-flow: column;
+            flex-flow: column;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+
+            #detailbooked__popup .popup__form .btn {
+                max-width: 100%
+            }
+
+        .details_phone_button {
+            margin: 10px auto 20px
+        }
+
+            .details_phone_button a i::before {
+                content: "\f095";
+                font: normal normal normal 16px/1 FontAwesome;
+                margin-right: 10px;
+            }
+
+        .details__popup .master__description .tel {
+            font-size: 14px;
+            color: #888888
+        }
+
+        .details__popup .booking .salon__service {
+            padding: 10px 5px
+        }
+
+            .details__popup .booking .salon__service table {
+                margin-right: 0;
+                width: 90%;
+                color: #000
+            }
+
+        .details__popup .btns {
+            max-width: 100%;
+            margin-top: 30px;
+        }
+
+            .details__popup .btns .btn {
+                max-width: 45%;
+                height: 32px;
+            }
+
+        .page__master-schedule-new .master-schedule .schedule__table--new .notworking {
+            background: #000;
+            color: #fff
+        }
+
+        .page__master-schedule-new .master-schedule .schedule__table--new .free {
+            background: #40ECAE;
+        }
+
+            .page__master-schedule-new .master-schedule .schedule__table--new .free:hover {
+                background-color: #17e299
+            }
+
+        .page__master-schedule-new .master-schedule .schedule__table--new .confirmed:hover {
+            background-color: #006dc4;
+        }
+
+        .page__master-schedule-new .master-schedule .schedule__table--new .not-confirmed:hover {
+            background-color: #e21739;
+        }
+
+        .confirmed {
+            background-color: Highlight;
+            color: #000
+        }
+
+        .not-confirmed {
+            background: #EC405D;
+            color: #fff
+        }
+
+        .pastime {
+            color: #fff
+        }
+
+        .page__master-schedule-new .master-schedule .schedule__table--new .booked::after {
+            content: url("data:image/svg+xml,%3Csvg width='13' height='4' viewBox='0 0 13 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.25 1.625C3.25 0.73125 2.51875 -1.10098e-07 1.625 -7.1031e-08C0.73125 -3.1964e-08 -1.10098e-07 0.73125 -7.1031e-08 1.625C-3.1964e-08 2.51875 0.73125 3.25 1.625 3.25C2.51875 3.25 3.25 2.51875 3.25 1.625ZM4.875 1.625C4.875 2.51875 5.60625 3.25 6.5 3.25C7.39375 3.25 8.125 2.51875 8.125 1.625C8.125 0.73125 7.39375 -3.23191e-07 6.5 -2.84124e-07C5.60625 -2.45057e-07 4.875 0.73125 4.875 1.625ZM9.75 1.625C9.75 2.51875 10.4812 3.25 11.375 3.25C12.2688 3.25 13 2.51875 13 1.625C13 0.731249 12.2688 -5.36284e-07 11.375 -4.97217e-07C10.4812 -4.5815e-07 9.75 0.73125 9.75 1.625Z' fill='white'/%3E%3C/svg%3E%0A");
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            width: 13px;
+            height: 4px;
+            line-height: 3px;
+            display: inline-block;
+        }
+
+        .page__master-schedule-new .master-schedule .schedule__table--new .not-confirmed::after {
+            content: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z' fill='white'/%3E%3C/svg%3E%0A");
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+
+        .notConfirmedReservations::before {
+            content: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z' fill='white'/%3E%3C/svg%3E%0A");
+            position: relative;
+            top: 0;
+            left: 5px;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            margin: 0 10px 0 0;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px
+        }
+
+        .attention {
+            font-size: 1.2em;
+            line-height: 1.2em;
+            border: solid 1px red;
+            border-radius: 5px;
+            padding: 5px
+        }
+
+        .fb-messenger-checkbox {
+            margin: 10px 0
+        }
+
+        .fb-messenger-checkbox span {
+            background-color:#ccc;
+            border-radius: 10px;
+            width: 250px !important
+        }
+</style>
+
+<script>
+    // Facebook CheckBox plugin onclick event
+    function confirmOptIn() {
+        $("#btnAddMessenger").hide();
+        FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, {
+            'app_id': '451287236164981',
+            'page_id': '103467518684626',
+            'ref': 'master_@User.GetSecurityCode()',
+            'user_ref':'@generatedId'
+        });
+        setTimeout(function () { location.reload(); }, 2000); // reload page
+    }
+</script>
+
+<main class="page__master-schedule-new">
+    <div class="container">
+        <section class="master-schedule">
+
+            @if (Model.DayToEndOfSubscription <= 5)
+            {
+                <!--<div class="warning">
+                    <div class="message">
+                        <span>Vaše predplatné sa konči o @Model.DayToEndOfSubscription dní.</span>
+                    </div>
+                </div>-->
+            }
+            @{
+                var today = DateTime.UtcNow;
+
+                bool isSmsPayed = true;
+                var daysToPayForSms = 0;
+                foreach (var payment in DBManager.Subscription.SubscriptionDbManager.Instance.GetPayments(DBManager.Master.MasterDbManager.Instance.GetOwnerByMasterId(Model.MasterId)))
+                {
+                    if (!payment.IsPaid && payment.PaymentType == 3)
+                    {
+                        isSmsPayed = false;
+                        daysToPayForSms = 7 - (today - payment.CreatedUtc).Days;
+                    }
+                }
+                if (!isSmsPayed)
+                {
+                    var datumSplatnosti = daysToPayForSms <= 0 ? "vyprší o 0 dní! Váš účet bude zablokovaný do uhradenia faktúry!" : "vyprší o " + daysToPayForSms + " dní!";
+                    <div class="warning">
+                        <div class="message" style="max-width:700px">
+                            <span style="font-size:16px;text-align:center">
+                                Máte faktúru za využité SMS notifikácie. Splatnosť faktúry @datumSplatnosti
+                            </span>
+                            <a href="/SalonOwner/Payments" class="btn" style="background-image:url(/img/payment-icon.png);background-position:left;background-repeat:no-repeat;background-size:45px;text-decoration:none;margin:10px auto">Platby</a>
+                        </div>
+                    </div>
+                }
+            }
+
+            @Html.HiddenFor(m => m.MasterId, new { @id = "hdMaster" })
+            @Html.HiddenFor(m => m.SalonId, new { @id = "hdSalon" })
+            @{today = DateTime.UtcNow.AddHours(int.Parse(ConfigurationManager.AppSettings["UtcShiftHours"]));}
+            @{var todayDate = DateTime.Now.ToString("yyyy-MM-dd");}
+
+            <input type="hidden" id="selected__serviceId" />
+            <input type="hidden" id="new_reservation_booked__service" />
+            <input type="hidden" id="selected_clientId" />
+            <input type="hidden" id="hdBookDate" value="@todayDate" />
+            <input type="hidden" id="hdTime" />
+
+            <input type="hidden" id="curDay" value="@today.Day" />
+            <input type="hidden" id="curMonth" value="@today.Month" />
+            <input type="hidden" id="curYear" value="@today.Year" />
+            <input type="hidden" id="hdMovingBooking" />
+
+            <div class="calendar" id="frmcalbok">
+                @if (User.IsFacebookActivated() == false)
+                {
+                    // CheckBox plugin
+                    <!--<div style="text-align:center">
+                        <section class="enter__form" style="padding:15px 10px;background-color:#ccc">
+                            <h2>Ako pripojiť messenger?</h2>
+                            <p style="text-align:left;margin:0;line-height:1.5em;font-weight:normal;font-size:14px">
+                                1. Zakliknite <img src="/images/src/send-to-messenger.png" style="height:30px" /> -> Iba ak nie ste prihlásený na webe FB, vyskočí okno prihlásenia na FB.<br />
+                                2. Prihláste sa v ňom, potom znova zakliknite <img src="/images/src/send-to-messenger.png" style="height:30px" /> a stalčte pripojiť messenger.
+                            </p>
+                            <div class="fb-messenger-checkbox" style="width:250px"
+                                 origin="https://beautyclick.sk"
+                                 page_id="103467518684626"
+                                 messenger_app_id="451287236164981"
+                                 user_ref="@generatedId"
+                                 allow_login="true"
+                                 size="standard"
+                                 skin="light"
+                                 center_align="false">
+                            </div>
+                            <input type="button" onclick="confirmOptIn()" value="Pripojiť Messenger" id="btnAddMessenger" class="btn" style="margin:auto;max-width:250px;background-color:#0a7cff" />
+                        </section>
+                    </div>-->
+
+                    <!--<a href="#" class="showFacebookPopup btn" style="margin:10px auto;background-color:#0a7cff">Pripojte si Messenger</a>-->
+                }
+                @if (User.IsFacebookActivated() == false && User.CheckViberActivationOnlyMasterOrSolo() == false)
+                {
+                    <!--<div style="text-align:center;margin:20px auto">
+                        <a href="viber://pa?chatURI=@System.Configuration.ConfigurationManager.AppSettings["ViberUri"]&context=master_@User.GetSecurityCode()" style="border: 2px #9069ae solid; border-radius: 25px; padding: 6px 20px; margin: 0 auto; background: #fff; font-size: 1.5em; color: #9069ae; font-weight:bold;">Pripojiť Viber <img src="/images/src/viber_icon.png" style="width:25px" /></a>
+                    </div>-->
+                }
+
+                <div style="background-color:#d9d9d9;border-radius:8px; padding:5px; flex-flow:wrap;display:flex;width:100%">
+                    <div style="width:68%;margin:5px 0">
+                        <span style="color:#000">Skopírujte a pošlite zákazníkovi link na vašu prevádzku.</span>
+                    </div>
+                    <div style="width:32%;margin:5px 0">
+                        <button onclick="copylink()" style="margin:0 auto;background:none;padding:0"><span style="text-decoration:underline;font-size:1.2em">Click TU</span> <img src="/img/click-icon.png" style="width:24px" /></button>
+                    </div>
+
+                    <div style="width:68%;margin:5px 0">
+                        <span style="color:#000">Pozrite si video-inštrukciu:<br />Ako fungujú objednávky.</span>
+                    </div>
+                    <div style="width:32%;margin:5px 0">
+                        <button id="showVideobutton" style="margin:0 auto;background:none;padding:0"><span style="text-decoration:underline;font-size:1.2em">Click TU</span> <img src="/img/click-icon.png" style="width:24px" /></button>
+                    </div>
+
+                    <div style="width:68%;margin:10px 0 0 0">
+                        <span style="color:#000">Zrušiť naraz viac objednávok</span>
+                    </div>
+                    <div style="width:32%;margin:5px 0 0 0">
+                        <button class="cancelBook" style="margin:0 auto;background:none;padding:0"><span style="text-decoration:underline;font-size:1.2em">Click TU</span> <img src="/img/click-icon.png" style="width:24px" /></button>
+                    </div>
+                </div>
+
+                <div style="text-align:center">
+                    <a href="/master/Clients/@Model.MasterId" class="btn" style="margin:15px auto 10px auto">Zoznam zákazníkov</a>
+                </div>
+
+                <div id="calendar_inside">
+                    @{ Html.RenderPartial("_MasterCalendar", Model.BookSchedule); }
+                </div>
+
+                @{ if (Model.NotConfirmedBookedCount > 0)
+                    {
+                        <div id="notConfirmedReservationsBtn" style="text-align:center">
+                            <a href="#masterSchedule" class="btn notConfirmedReservations" style="background:#000;margin:10px auto">Nepotvrdené objednávky (@Model.NotConfirmedBookedCount)</a>
+                        </div>
+                    }
+                }
+
+                <div id="newclientorder" style="text-align:center">
+                    <a href="#" class="newReservation btn" style="margin:15px auto 0 auto;height:44px;background:#4ec42c;font-size:1.5em">Nová objednávka <img src="/img/nova-objednavka.png" style="width:50px" /></a>
+                </div>
+            </div>
+
+            <div class="schedule">
+                <div style="max-width:700px;width:100%;padding:15px">
+                    <ul class="month__list">
+                        <li style="display:block">
+                            <div style="text-align:center">
+                                <span class="date" id="spanDay">@Model.BookSchedule.Date.Day.@Model.BookSchedule.Date.Month.ToString("00").@Model.BookSchedule.Date.Year</span>
+                            </div>
+
+                            @{ 
+                                var workTimeFrom = Model.WorkingTimeFrom.ToString("hh\\:mm");
+                                var workTimeTo = Model.WorkingTimeTo.ToString("hh\\:mm");
+                            }
+
+                            <div style="text-align:center;margin-top:20px">
+                                <span style="font-weight:normal">zmeniť pracovnú dobu iba pre tento deň</span>
+                                <div id="workingTime" class="wrap-inner" style="height:70px;max-width:320px;display:flex;margin:10px auto;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-flow:row;flex-flow:row;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between">
+                                    <div>
+                                        <div id="WorkingTimeFromUp" style="padding:5px;height:23px;line-height:20px;margin-left:20px;cursor:pointer;position:relative"><span style="background:url(/img/timepicker-arrows.png); background-position:top center;margin:0 auto;display:block;width:13px;height:8px"></span></div>
+                                        <div class="input__wrap" style="-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-flow:row;flex-flow:row;-webkit-box-align:center;-ms-flex-align:center;align-items:center">
+                                            <label style="margin:0;font-weight:normal">od</label>
+                                            <input type="time" name="WorkingTimeFrom" id="WorkingTimeFrom" value="@workTimeFrom" step="1800" style="padding-right:0;padding-top:1px;width:auto;height:25px;margin-bottom:0;margin-left:7px;text-align:center;background:#FFF;border:1px solid #D0D0D0;border-radius:25px;font-size:1.1em" readonly required>
+                                        </div>
+                                        <div id="WorkingTimeFromDown" style="padding:10px 5px 5px 5px;height:22px;line-height:20px;margin-left:20px;cursor:pointer;position:relative"><span style="background:url(/img/timepicker-arrows.png); background-position:bottom center;margin:0 auto;display:block;width:13px;height:8px"></span></div>
+                                    </div>
+
+                                    <div>
+                                        <div id="WorkingTimeToUp" style="padding:5px;height:23px;line-height:20px;margin-left:20px;cursor:pointer;position:relative"><span style="background:url(/img/timepicker-arrows.png); background-position:top center;margin:0 auto;display:block;width:13px;height:8px"></span></div>
+                                        <div class="input__wrap" style="-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-flow:row;flex-flow:row;-webkit-box-align:center;-ms-flex-align:center;align-items:center">
+                                            <label style="margin:0;font-weight:normal">do</label>
+                                            <input type="time" name="WorkingTimeTo" id="WorkingTimeTo" value="@workTimeTo" step="1800" style="padding-right:0;padding-top:1px;width:auto;height:25px;margin-bottom:0;margin-left:7px;text-align:center;background:#FFF;border:1px solid #D0D0D0;border-radius:25px;font-size:1.1em" readonly required>
+                                        </div>
+                                        <div id="WorkingTimeToDown" style="padding:10px 5px 5px 5px;height:22px;line-height:20px;margin-left:20px;cursor:pointer;position:relative"><span style="background:url(/img/timepicker-arrows.png); background-position:bottom center;margin:0 auto;display:block;width:13px;height:8px"></span></div>
+                                    </div>
+                                </div>
+                                <button id="bntWorkTimeTodaySave" class="btn" style="margin:0 auto;max-width:100px">Uložiť</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="wrap-table">
+                    <table class="schedule__table--new">
+                        <tbody id="masterSchedule" class="schedule__table--new fe">
+                            @{ Html.RenderPartial("_MasterSchedule", Model.MasterScheduleModel); }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<div id="booked__popup" class="popup protected">
+    <div class="overlay"></div>
+    <div class="popup__form">
+        <div class="title-wpap">
+            <h2 class="top-title">Rezervácia klienta</h2>
+            <div class="booked__time">
+                <input type="hidden" id="spSchedDate_popup" value="@Model.BookSchedule.Date.Day.@Model.BookSchedule.Date.Month.@Model.BookSchedule.Date.Year" />
+                <input type="hidden" id="hdY_popup" value="@Model.BookSchedule.Date.Year" />
+                <input type="hidden" id="hdD_popup" value="@Model.BookSchedule.Date.Day" />
+                <input type="hidden" id="hdM_popup" value="@Model.BookSchedule.Date.Month" />
+
+                <input type="hidden" id="hdY" value="@Model.BookSchedule.Date.Year" />
+                <input type="hidden" id="hdD" value="@Model.BookSchedule.Date.Day" />
+                <input type="hidden" id="hdM" value="@Model.BookSchedule.Date.Month" />
+                <span class="date" id="spSchedDate">@Model.BookSchedule.Date.Day.@Model.BookSchedule.Date.Month.@Model.BookSchedule.Date.Year</span> / <span class="time" id="spSchedTime"></span>
+            </div>
+        </div>
+
+        <button class="close-btn addschedclose"><span></span></button>
+
+        <form class="popup-form__booked" id="frmMasterSched" action="" method="POST">
+            <div class="input__wrap">
+                <label for="booked__phone">Telefónne číslo <span style="background-color:#EC405D; color:#fff; padding:0 3px">v tvare 09..</span></label>
+                <input id="booked__phone" name="Phone" type="text" pattern="09[0-9]{2}-[0-9]{3}-[0-9]{3}" class="nocopy" autocomplete="off" minlenth="12" oninvalid="this.setCustomValidity('@Resources.General.FieldValidator')" oninput="setCustomValidity('')" placeholder="Telefónne číslo" required="" maxlength="16">
+            </div>
+
+            <div class="input__wrap">
+                <label for="booked__name">Meno a priezvisko</label>
+                <input id="booked__name" type="name" oninvalid="this.setCustomValidity('@Resources.General.FieldValidator')" oninput="setCustomValidity('')" name="name" placeholder="Meno a priezvisko" required>
+            </div>
+            <input type="hidden" id="hdUserId" value="0" />
+
+            <label for="booked__service">Služba</label>
+            <div class="input__wrap select">
+                @Html.DropDownListFor(m => m.ServiceItems, Model.ServiceItems, new
+                {
+               id = "booked__service",
+               required = "",
+               name = "booked__service",
+               oninvalid = "this.setCustomValidity('" + @Resources.General.FieldValidator + "')",
+               oninput = "setCustomValidity('')"
+                })
+            </div>
+            <button class="btn" id="btnAddBook" type="submit">Uložiť</button>
+        </form>
+    </div>
+</div>
+
+<div id="facebook__popup" class="popup">
+    <div class="overlay"></div>
+    <div class="popup__form" style="padding:20px">
+        <button class="close-btn facebookPopupClose"><span></span></button>
+
+        <!-- Send to Messenger plugin -->
+        <!--<div style="text-align:center;margin:0 0 20px 0">
+            <section class="enter__form" style="padding:20px">
+                <div class="fb-send-to-messenger" style="margin:0 auto;width:175px"
+                     messenger_app_id="451287236164981"
+                     page_id="103467518684626"
+                     data-ref="@generatedId"
+                     color="blue"
+                     size="xlarge">
+                </div>
+            </section>
+            </div>
+        -->
+        <!-- CheckBox plugin -->
+        <div style="text-align:center">
+            <section class="enter__form" style="padding:0;background:transparent;box-shadow:none">
+                <h2>Ako pripojiť messenger?</h2>
+                <p style="text-align:left;margin:0;line-height:1.5em;font-weight:normal;font-size:14px">
+                    1. Zakliknite <img src="/images/src/send-to-messenger.png" style="height:30px;border-radius:5px" /> --> Iba ak nie ste prihlásený na webe FB, vyskočí okno prihlásenia na FB.<br />
+                    2. Prihláste sa v ňom, potom znova zakliknite <img src="/images/src/send-to-messenger.png" style="height:30px;border-radius:5px" /> a stalčte pripojiť messenger.
+                    <!--Ak vidíte svoju foto s textom: nieste to vy? zakliknite <img src="/images/src/send-to-messenger.png" style="height:30px" />&nbsp; a potom tlačítko "Pripojiť Messenger"<br />-->
+                    <!--Všetky notifikácie budú zaslané zadarmo tam.-->
+                </p>
+
+                <!--<div class="fb-messenger-checkbox"
+                     origin="https://beautyclick.sk"
+                     page_id="103467518684626"
+                     messenger_app_id="451287236164981"
+                     user_ref="@generatedId"
+                     allow_login="true"
+                     size="large"
+                     skin="light"
+                     center_align="true">
+                </div>-->
+                <input type="button" onclick="confirmOptIn()" value="Pripojiť Messenger" id="btnAddMessenger" class="btn" style="margin:auto;max-width:250px;background-color:#0a7cff;height:40px" />
+            </section>
+        </div>
+    </div>
+</div>
+
+
+<div id="new_reservation__popup" class="popup">
+    <div class="overlay"></div>
+    <div class="popup__form" style="height:500px;padding:20px">
+        <div class="title-wpap" style="text-align:center;display:block">
+            <h2 class="top-title">Rezervácia klienta</h2>
+        </div>
+        <button class="close-btn newreservationclose"><span></span></button>
+
+        <form class="popup-form__booked" id="frmNewReservationWithService" action="" method="POST" style="padding:20px 10px; border:solid 1px #4D4D4D; border-radius:20px">
+            <label for="new_reservation_service" style="text-align:center">Vyberte službu</label>
+            <div class="input__wrap select">
+                <select id="new_reservation_service" name="ServiceItems" oninput="setCustomValidity('')" oninvalid="this.setCustomValidity('Prosím vyberte službu')" required>
+                    <option disabled="disabled" value="-1">Vyberte službu</option>
+                    @{
+                        foreach (var service in Model.MasterServices)
+                        {
+                            var hod = service.DefaultDuration / 60;
+                            var min = service.DefaultDuration % 60 == 0 ? "00" : Convert.ToString(service.DefaultDuration % 60);
+                            <option value="@service.Id">@service.Name (@hod:@min hod.)</option>
+                        }
+                    }
+                </select>
+            </div>
+            <button class="btn" type="submit" style="margin:5px auto">Vybrať termín</button>
+        </form>
+
+        <div class="title-wpap" style="text-align:center;display:block;margin:35px 0">
+            <h2 class="top-title" style="margin:0">Alebo</h2>
+        </div>
+
+        <form class="popup-form__booked" id="frmNewReservation" action="" method="POST" style="padding:20px 10px; border:solid 1px #4D4D4D; border-radius:20px">
+            <label for="new_reservation_duration" style="text-align:center">Vyberte trvanie služby vrátane prestávky</label>
+            <div class="input__wrap select">
+                <select name="new_reservation_duration" id="new_reservation_duration">
+                    <option value="0" selected="">Vyberte čas...</option>
+                    <option value="15">15 minút</option>
+                    <option value="30">30 minút</option>
+                    <option value="45">45 minút</option>
+                    <option value="60">1 hod.</option>
+                    <option value="75">1:15 hod.</option>
+                    <option value="90">1:30 hod.</option>
+                    <option value="105">1:45 hod.</option>
+                    <option value="120">2 hod.</option>
+                    <option value="135">2:15 hod.</option>
+                    <option value="150">2:30 hod.</option>
+                    <option value="165">2:45 hod.</option>
+                    <option value="180">3 hod.</option>
+                    <option value="195">3:15 hod.</option>
+                    <option value="210">3:30 hod.</option>
+                    <option value="225">3:45 hod.</option>
+                    <option value="240">4 hod.</option>
+                    <option value="255">4:15 hod.</option>
+                    <option value="270">4:30 hod.</option>
+                    <option value="285">4:45 hod.</option>
+                    <option value="300">5 hod.</option>
+                    <option value="315">5:15 hod.</option>
+                    <option value="330">5:30 hod.</option>
+                    <option value="345">5:45 hod.</option>
+                    <option value="360">6 hod.</option>
+                </select>
+            </div>
+            <button class="btn" type="submit" style="margin:5px auto">Vybrať termín</button>
+        </form>
+    </div>
+</div>
+
+<div id="new_reservation_client_comment__popup" class="popup protected">
+    <div class="overlay"></div>
+    <div class="popup__form">
+        <div class="title-wpap">
+            <h2 class="top-title">Rezervácia klienta</h2>
+        </div>
+        <button class="close-btn newreservationClientCommentClose"><span></span></button>
+        <form class="popup-form__booked" id="frmNewReservationClientComment" action="" method="POST">
+            <div class="input__wrap">
+                <label for="new_reservation_client_name">Meno a priezvisko</label>
+                <input id="new_reservation_client_name" name="new_reservation_client_name" type="name" autofocus autocomplete="off" aria-autocomplete="list" list="dtNameVsComment" oninvalid="this.setCustomValidity('@Resources.General.FieldValidator')" oninput="setCustomValidity('')" placeholder="Meno a priezvisko" required>
+                <datalist id="dtNameVsComment">
+                </datalist>
+            </div>
+            <input type="hidden" id="hdSelClientVal" value="0" />
+
+            <div class="input__wrap">
+                <label for="new_reservation_client_phone">Telefónne číslo <span style="background-color:#EC405D;color:#fff;padding:0 3px">v tvare 09..</span></label>
+                <input id="new_reservation_client_phone" name="new_reservation_client_phone" type="text" style="margin-bottom:10px" pattern="09[0-9]{2}-[0-9]{3}-[0-9]{3}" oninvalid="this.setCustomValidity('@Resources.General.FieldValidator')" oninput="setCustomValidity('')" placeholder="09xx-xxx-xxx" minlenth="12">
+                <div>
+                    <div class="attention">
+                        <span style="color:#EC405D;font-weight:bold;">! </span>
+                        Nikdy nezadávajte číslo vymyslené alebo vaše.
+                        Tel. číslo je systémom spojené s klientom
+                        ako jeho identifikácia.
+                        Ak číslo nemôžete napísať vynechajte ho a doplňte neskôr v zozname klientov.
+                    </div>
+                </div>
+            </div>
+
+            <div class="input__wrap" style="margin-top:10px">
+                <label for="new_reservation_description">Poznámka k službe</label>
+                <textarea id="new_reservation_description" name="new_reservation_description" placeholder="Sem napíšte informácie o službe" cols="30" rows="11"></textarea>
+            </div>
+
+            <button class="btn" type="submit">Dokončiť</button>
+        </form>
+    </div>
+</div>
+
+<div id="change_reservation__popup" class="popup">
+    <div class="overlay"></div>
+    <div class="popup__form">
+        <div class="title-wpap">
+            <h2 class="top-title">Zmeniť rezerváciu klienta</h2>
+        </div>
+        <button class="close-btn changereservationclose"><span></span></button>
+        <form class="popup-form__booked" id="frmChangeReservation" action="" method="POST">
+            <label for="change_reservation_duration">Vyberte trvanie služby vrátane prestávky</label>
+            <div class="input__wrap select">
+                <select name="change_reservation_duration" id="change_reservation_duration">
+                    <option value="15" selected="">15 minút</option>
+                    <option value="30">30 minút</option>
+                    <option value="45">45 minút</option>
+                    <option value="60">1 hod.</option>
+                    <option value="75">1:15 hod.</option>
+                    <option value="90">1:30 hod.</option>
+                    <option value="105">1:45 hod.</option>
+                    <option value="120">2 hod.</option>
+                    <option value="135">2:15 hod.</option>
+                    <option value="150">2:30 hod.</option>
+                    <option value="165">2:45 hod.</option>
+                    <option value="180">3 hod.</option>
+                    <option value="195">3:15 hod.</option>
+                    <option value="210">3:30 hod.</option>
+                    <option value="225">3:45 hod.</option>
+                    <option value="240">4 hod.</option>
+                    <option value="255">4:15 hod.</option>
+                    <option value="270">4:30 hod.</option>
+                    <option value="285">4:45 hod.</option>
+                    <option value="300">5 hod.</option>
+                    <option value="315">5:15 hod.</option>
+                    <option value="330">5:30 hod.</option>
+                    <option value="345">5:45 hod.</option>
+                    <option value="360">6 hod.</option>
+                </select>
+            </div>
+            <div class="input__wrap">
+                <label for="change_reservation_description">Poznámka k službe</label>
+                <textarea id="change_reservation_description" name="change_reservation_description" placeholder="Sem napíšte informácie o službe" cols="30" rows="11"></textarea>
+            </div>
+            <button class="btn" type="submit">Vybrať termín</button>
+        </form>
+    </div>
+</div>
+
+<div id="cancelbooked__popup" class="popup">
+    <div class="overlay"></div>
+    <div class="popup__form">
+        <div class="title-wpap" style="margin:0">
+            <h2 class="top-title" style="margin:0 auto 10px">Zrušiť všetko v tento deň</h2>
+        </div>
+        <button class="close-btn cancelbookclose"><span></span></button>
+        <form class="popup-form__booked" id="frmCancelBooking" action="" method="POST">
+            <div id="frmCancelBookingDays"></div>
+            <button class="btn" style="margin-top:10px" id="btnCancelbook" type="submit">Zrušiť</button>
+        </form>
+    </div>
+</div>
+
+<div id="detailbooked__popup" class="popup details__popup">
+    <div class="overlay"></div>
+    <div class="popup__form">
+        <button class="close-btn detschedclose">
+            <span></span>
+        </button>
+        <div class="inner">
+            <h6>Detaily rezervácie</h6>
+            <input type="hidden" id="hdDetBookId" />
+            <input type="hidden" id="hdVUserId" value="0" />
+            <input type="hidden" id="hdDetDate" value="@Model.BookSchedule.Date.Day.@Model.BookSchedule.Date.Month.@Model.BookSchedule.Date.Year" />
+            <div class="master">
+                <img src="" id="schedDetCusAva" alt="" class="photo">
+                <div class="master__description">
+                    <span class="name" id="booked__Detname"></span>
+                    <span class="tel" id="booked__Detphone"></span>
+                </div>
+            </div>
+            <div class="details_phone_button" id="details_phone_button"></div>
+            <ul class="salon__service-list booking">
+                <li class="salon__service">
+                    <table class="table__service">
+                        <tbody>
+                            <tr>
+                                <th>Služba: </th>
+                                <td><span id="booked__Detservice"></span></td>
+                            </tr>
+                            <tr>
+                                <th>Dátum: </th>
+                                <td>
+                                    <span class="booking-date" id="spDetSchedDay"></span> <span class="booking-month" id="spDetSchedMonth"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Čas: </th>
+                                <td>
+                                    <span id="spDetSchedTime"></span>
+                                </td>
+                            </tr>
+                            <tr id="trDetailedClientComment">
+                                <th colspan="2"><span id="spClientComment"></span></th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+            <div class="details_poznamka" id="details_poznamka"></div>
+            <div class="btns">
+                <button class="btn" id="btnAproveCustomerBooking" type="submit">Potvrdiť rezerváciu</button>
+                <button class="btn" id="btnChangeCustomerBooking" type="submit">Zmeniť rezerváciu</button>
+                <button class="btn" id="btnMoveCustomerBooking" type="submit">Preniesť rezerváciu na iný termín</button>
+                <button class="btn" id="btnCancelCustomerBooking" type="submit">Zrušiť rezerváciu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="video__popup" class="popup">
+    <div id="video_overlay" class="overlay"></div>
+    <div class="enter__form" style="max-width:1000px;padding:0">
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/IYBSp3HhXSk?controls=0&rel=0" title="Ako používať systém rezervácie BeautyClick?" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="dvSchedMonth">
+</div>
+
+<script type="text/javascript">
+    function copylink() {
+        navigator.clipboard.writeText('https://beautyclick.sk/Salon/' + $("#hdSalon").val())
+            .then(() => {
+                successMsg("Link bol skopirovany");
+            })
+            .catch(err => {
+
+            });
+    }
+
+    $(document).ready(function () {
+        $("#booked__service").val('-1');
+        var isAModelbox= '@User.IsInRole(Role.SalonAdmin)';
+
+        //var isFacebookActivated = '@User.IsFacebookActivated()';
+        /*if (isFacebookActivated == 'False')
+        {
+            $("#facebook__popup").toggleClass("show");
+        }*/
+
+        $("#new_reservation_client_name").autocomplete({
+            source: function (request, response) {
+                var f = false;
+                var options = $('#dtNameVsComment option');
+
+                $(options).each(function () {
+                    if (this.label.toLocaleLowerCase() === request.term.toLocaleString() || (this.label === request.term)) {
+                        f = true;
+                        $("#hdSelClientVal").val($(this).data('id'));
+                        var phoneFormatted = $(this).data('val').substring(0, 4) + '-' + $(this).data('val').substring(4, 7) + '-' + $(this).data('val').substring(7, 10);
+                        $("#new_reservation_client_phone").val(phoneFormatted);
+                    }
+                });
+                if (!f) {
+                    $('#dtNameVsComment').empty();
+                    $.ajax({
+                        url: '/Home/ClientNameAutocomplete',
+                        datatype: "json",
+                        data: {
+                            term: request.term,
+                            salonId: $("#hdSalon").val() === "" ? 0 : $("#hdSalon").val()
+                        },
+                        success: function (data) {
+                            $.each(data,
+                                function (index, value) {
+                                    $('#dtNameVsComment').append('<option data-val="' + value.Value + '" data-id="' + value.Id + '">' + value.Name + '</option>');
+                                });
+                        }
+                    });
+                }
+            },
+            select: function (event, ui) {
+                /*console.log(event);
+                console.log(ui.item);
+                $("#CustomerID").val(ui.item.customerId);*/
+            }
+        });
+    });
+
+    $(document).on('click', '#showVideobutton', function (e) {
+        e.preventDefault();
+        $("#video__popup").toggleClass("show");
+    });
+
+    $(document).on("click", ".timeSelBtn", function (e) {
+        $("#booking-date__popup").scrollTop($(".btnBookingPopUp").offset().top);
+    });
+
+    document.getElementById("video_overlay").onclick = function (e) {
+        var e = e || window.event;
+        var target = e.target || e.srcElement;
+        if (this == target) {
+            $("#video__popup").toggleClass("show");
+        }
+    }
+
+    $("#booked__phone").change(function (e) {
+        if ($(this).val().length != 16) {
+            $("#booked__name" ).prop( "disabled", false);
+            return;
+        }
+        $("#hdUserId").val('');
+        $("#booked__name").val('');
+        $.ajax({
+            url: '/Master/FindUser?phone=' + $(this).val(),
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                if (data.isExist) {
+                    $("#booked__name").val(data.Name);
+                    $("#booked__name").prop("disabled", true);
+                    $("#hdUserId").val(data.Id);
+                } else {
+                    $("#booked__name" ).prop( "disabled", false);
+                }
+            },
+            error: function (xhr) {
+            }
+        });
+    });
+
+    $(document).on("submit", "#frmMasterSched", function (e) {
+        e.preventDefault();
+
+        var data = {
+            masterId: $("#hdMaster").val(),
+            clientName: $("#booked__name").val(),
+            clientPhone: $("#booked__phone").val(),
+            serviceId: $("#booked__service").val(),
+            date: $("#spSchedDate").html(),
+            time: $("#spSchedTime").html(),
+            salonId: $("#hdSalon").val(),
+            customerId: $("#hdUserId").val(),
+            serviceName: $("#booked__service option:selected").text()
+        };
+
+        $.post("/Master/AddSchedule", { json: data })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    $("#booked__popup").toggleClass("show");
+                    successMsg(result.Message);
+                    loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                    $("#hdUserId").val('');
+                } else {
+                    $.alert({
+                        title: 'Chyba!',
+                        content: result.Message
+                    });
+                }
+            })
+            .fail(function (xhr, status, error) {
+            });
+    });
+
+    $(document).on("click", ".timeSel", function (e) {
+        $(".timeSelBtn").removeClass("active");
+        e.preventDefault();
+
+        $("#hdTime").val($(this).data("time"));
+        console.log($(this).first(".timeSelBtn"));
+        $(this).find(">:first-child").addClass("active");
+    });
+
+    function booking(obj, e) {
+        e.preventDefault();
+        if ($("#hdTime").val() === undefined || $("#hdTime").val() === null || $("#hdTime").val().length <= 0) {
+            errorMsgC('Chyba! Vyberte čas');
+            return;
+        }
+        var data = {
+            masterId: $("#hdMaster").val(),
+            clientName: $("#new_reservation_client_name").val(),
+            clientPhone: $("#new_reservation_client_phone").val(),
+            serviceId: $("#new_reservation_booked__service").val(),
+            date: $("#spSchedDate").html(),
+            time: $("#hdTime").val(),
+            salonId: $("#hdSalon").val(),
+            customerId: $("#hdUserId").val(),
+            serviceName: $("#new_reservation_booked__service option:selected").text()
+        };
+        $.post("/Master/AddSchedule", { json: data })
+        .done(function (result) {
+            if (result.IsSuccess) {
+                $("#booking-date__popup").toggleClass("show");
+                $(".timeSelBtn").removeClass("active");
+                $("#hdTime").val("");
+
+                successMsg(result.Message);
+                loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                $("#hdUserId").val('');
+            } else {
+                $.alert({ title: 'Chyba!', content: result.Message });
+            }
+        })
+        .fail(function (xhr, status, error) {
+             // location.reload();
+        });
+    }
+
+    function bookingFromPopup(obj, e) {
+        e.preventDefault();
+        if ($("#hdTime").val() === undefined || $("#hdTime").val() === null || $("#hdTime").val().length <= 0) {
+            errorMsgC('Chyba! Vyberte čas');
+            return;
+        }
+        var data = {
+            masterId: $("#hdMaster").val(),
+            clientName: $("#new_reservation_client_name").val(),
+            clientPhone: $("#new_reservation_client_phone").val(),
+            serviceId: $("#new_reservation_booked__service").val(),
+            date: $("#spSchedDate_popup").val(),
+            time: $("#hdTime").val(),
+            salonId: $("#hdSalon").val(),
+            customerId: $("#hdUserId").val(),
+            serviceName: $("#new_reservation_booked__service option:selected").text()
+        };
+        $.post("/Master/AddSchedule", { json: data })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    $("#booking-date__popup").toggleClass("show");
+                    $("#new_reservation__popup").removeClass("show");
+                    $(".timeSelBtn").removeClass("active");
+                    $("#hdTime").val("");
+                    $("#spSchedDate_popup").val($("#spSchedDate").html());
+                    $("#hdY_popup").val($("#hdY").val());
+                    $("#hdM_popup").val($("#hdM").val());
+                    $("#hdD_popup").val($("#hdD").val());
+                    successMsg(result.Message);
+                    // обновление текущего календаря мастера
+                    loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                    $("#hdUserId").val('');
+                } else {
+                    $.alert({ title: 'Chyba!', content: result.Message });
+                    //errorMsgC(result.Message);
+                }
+            })
+            .fail(function (xhr, status, error) {
+                // location.reload();
+            });
+    }
+
+    // изменение записи мастером
+    $("#btnChangeCustomerBooking").click(function (e) {
+        e.preventDefault();
+        $("#detailbooked__popup").toggleClass("show");
+        $("#change_reservation__popup").toggleClass("show");
+    });
+
+    $(document).on("submit", "#frmChangeReservation", function (e) {    // изменение записи мастером
+        e.preventDefault();
+        $("#hdMaster").val(@Model.MasterId);
+        $.post("/Master/CreateTempProcedure", { duration: $("#change_reservation_duration").val(), masterId: @Model.MasterId, name: "." })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    $("#change_reservation__popup").toggleClass("show");
+                    $("#hdService").val(result.Id);
+                    $("#new_reservation_booked__service").val(result.Id);
+                    var day = $("#curDay").val();
+                    if (day === undefined || day === null) { day = 1; }
+                    $("#hdcurDay").val(day);
+                    var CurrentDate = new Date();
+                    var SelectedDate = new Date($("#hdY_popup").val(), $("#hdM_popup").val() - 1, day);
+                    if (SelectedDate < CurrentDate) {
+                        loadCalendarForChangeBooking(CurrentDate.getUTCMonth() + 1, CurrentDate.getFullYear(), @Model.MasterId, result.Id, CurrentDate.getUTCDate());
+                    } else {
+                        loadCalendarForChangeBooking($("#curMonth").val(), $("#curYear").val(), @Model.MasterId, result.Id, day);
+                    }
+                } else {
+                    $.alert({
+                        title: 'Chyba!',
+                        content: result.Message
+                    });
+                }
+            })
+            .fail(function (xhr, status, error) {
+            });
+    });
+
+    function loadCalendarForChangeBooking(m, y, master, service, day = 1) {
+        $.ajax({
+            url: '/Home/GetCalendarForChangeBooking?bookId=' + $("#hdDetBookId").val() + "&month=" + m + "&year=" + y + "&day=" + day + "&master=" + ((master === undefined || master === null) ? 0 : master) +
+                "&service=" + ((service === undefined || service === null) ? 0 : service),
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                loadSlot(master, service, m, y, day);
+                $("#dvSchedMonth").html(data);
+                if (!$("#booking-date__popup").is("show")) {
+                    // вывод окна выбора свободного времени
+                    $("#booking-date__popup").toggleClass("show");
+                }
+            },
+            error: function (xhr) {
+            }
+        });
+    }
+
+    function changeBookByMasterFromPopup(obj, e) {  // завершаем изменение записи мастером
+        e.preventDefault();
+        if ($("#hdTime").val() === undefined || $("#hdTime").val() === null || $("#hdTime").val().length <= 0) {
+            errorMsgC('Chyba! Vyberte čas');
+            return;
+        }
+
+        var data = {
+            masterId: $("#hdMaster").val(),
+            clientName: $("#new_reservation_client_name").val(),
+            clientPhone: $("#new_reservation_client_phone").val(),
+            serviceId: $("#new_reservation_booked__service").val(),
+            date: $("#spSchedDate_popup").val(),
+            time: $("#hdTime").val(),
+            salonId: $("#hdSalon").val(),
+            customerId: $("#hdUserId").val(),
+            masterComment: $("#change_reservation_description").val(),
+            changedDate: $("#hdDetDate").val(),
+            changedTime: $("#spDetSchedTime").html().split(" - ")[0]
+        };
+
+        $.post("/Master/AddScheduleChangeReservation", { json: data, curBookId: $("#hdDetBookId").val()})
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    $("#change_reservation__popup").removeClass("show");
+                    $("#booking-date__popup").removeClass("show");
+                    $(".timeSelBtn").removeClass("active");
+                    $("#hdTime").val("");
+                    $("#spSchedDate_popup").val($("#spSchedDate").html());
+                    $("#hdY_popup").val($("#hdY").val());
+                    $("#hdM_popup").val($("#hdM").val());
+                    $("#hdD_popup").val($("#hdD").val());
+                    successMsg(result.Message);
+                    // обновление текущего календаря мастера
+                    loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                    $("#hdUserId").val('');
+                    $("#change_reservation_description").val('');
+                } else {
+                    $.alert({ title: 'Chyba!', content: result.Message });
+                    //errorMsgC(result.Message);
+                }
+            })
+            .fail(function (xhr, status, error) {
+                // location.reload();
+            });
+    }
+
+    $(document).on("submit", "#frmNewReservationWithService", function (e) {
+        e.preventDefault();
+        $("#new_reservation__popup").toggleClass("show");
+
+        $("#hdService").val($("#new_reservation_service").val());
+        $("#new_reservation_booked__service").val($("#new_reservation_service").val());
+
+        var day = $("#curDay").val();
+        if (day === undefined || day === null) { day = 1; }
+        $("#hdcurDay").val(day);
+        var CurrentDate = new Date();
+        var SelectedDate = new Date($("#hdY_popup").val(), $("#hdM_popup").val() - 1, day);
+        if (SelectedDate < CurrentDate) {
+            loadNewBookingByMasterCalendar(CurrentDate.getUTCMonth() + 1, CurrentDate.getFullYear(), @Model.MasterId, $("#new_reservation_service").val(), CurrentDate.getUTCDate());
+        } else {
+            loadNewBookingByMasterCalendar($("#curMonth").val(), $("#curYear").val(), @Model.MasterId, $("#new_reservation_service").val(), day);
+        }
+    });
+
+    $(document).on("submit", "#frmNewReservation", function (e) {
+        e.preventDefault();
+
+        if ($("#new_reservation_duration").val() == 0) {
+            errorMsgC('Chyba! Vyberte čas');
+            return;
+        }
+
+        $("#hdMaster").val(@Model.MasterId);
+        $.post("/Master/CreateTempProcedure", { duration: $("#new_reservation_duration").val(), masterId: @Model.MasterId, name: "." })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    $("#new_reservation__popup").toggleClass("show");
+                    //successMsg(result.Message);
+                    $("#hdService").val(result.Id);
+                    $("#new_reservation_booked__service").val(result.Id);
+                    var day = $("#curDay").val();
+                    if (day === undefined || day === null) { day = 1; }
+                    $("#hdcurDay").val(day);
+                    var CurrentDate = new Date();
+                    var SelectedDate = new Date($("#hdY_popup").val(), $("#hdM_popup").val() - 1, day);
+                    if (SelectedDate < CurrentDate) {
+                        loadNewBookingByMasterCalendar(CurrentDate.getUTCMonth() + 1, CurrentDate.getFullYear(), @Model.MasterId, result.Id, CurrentDate.getUTCDate());
+                    } else {
+                        loadNewBookingByMasterCalendar($("#curMonth").val(), $("#curYear").val(), @Model.MasterId, result.Id, day);
+                    }
+                } else {
+                    $.alert({
+                        title: 'Chyba!',
+                        content: result.Message
+                    });
+                }
+            })
+            .fail(function (xhr, status, error) {
+            });
+    });
+
+    function loadNewBookingByMasterCalendar(m, y, master, service, day = 1) {
+        $.ajax({
+            url: '/Home/GetNewBookingByMasterCalendar?month=' + m + "&year=" + y + "&day=" + day + "&master=" + ((master === undefined || master === null) ? 0 : master) +
+                "&service=" + ((service === undefined || service === null) ? 0 : service),
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                loadSlot(master, service, m, y, day);
+                $("#dvSchedMonth").html(data);
+                if (!$("#booking-date__popup").is("show")) {
+                    // вывод окна выбора свободного времени
+                    $("#booking-date__popup").toggleClass("show");
+                }
+                $("#new_reservation__popup").toggleClass("show");
+            },
+            error: function (xhr) {
+            }
+        });
+    }
+
+    function newBookingByMasterFromPopup(obj, e) {
+        e.preventDefault();
+        if ($("#hdTime").val() === undefined || $("#hdTime").val() === null || $("#hdTime").val().length <= 0) {
+            errorMsgC('Chyba! Vyberte čas');
+            return;
+        }
+        $("#booking-date__popup").removeClass("show");
+        $("#new_reservation_client_comment__popup").toggleClass("show");
+    }
+
+    $(document).on("submit", "#frmNewReservationClientComment", function (e) {
+        e.preventDefault();
+        var data = {
+            masterId: $("#hdMaster").val(),
+            clientName: $("#new_reservation_client_name").val(),
+            clientPhone: $("#new_reservation_client_phone").val(),
+            serviceId: $("#new_reservation_booked__service").val(),
+            date: $("#spSchedDate_popup").val(),
+            time: $("#hdTime").val(),
+            salonId: $("#hdSalon").val(),
+            //customerId: $("#hdUserId").val(),
+            customerId: $("#hdSelClientVal").val(),
+            masterComment: $("#new_reservation_description").val(),
+            serviceName: $("#new_reservation_service option:selected").text().slice(0,-12)
+        };
+        $("#hdSelClientVal").val(0);
+        $.post("/Master/AddScheduleNewReservation", { json: data })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    if (data.clientPhone != "") {
+                        var url = '/Home/Remind';
+                        $.post(url, { scheduleid: result.Id, bookBefore: "3" });
+                    }
+                    $("#new_reservation__popup").removeClass("show");
+                    $("#new_reservation_client_comment__popup").removeClass("show");
+                    $(".timeSelBtn").removeClass("active");
+                    $("#hdTime").val("");
+                    $("#spSchedDate_popup").val($("#spSchedDate").html());
+                    $("#hdY_popup").val($("#hdY").val());
+                    $("#hdM_popup").val($("#hdM").val());
+                    $("#hdD_popup").val($("#hdD").val());
+                    successMsg(result.Message);
+                    // обновление текущего календаря мастера
+                    loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                    $("#hdUserId").val('');
+                    $("#new_reservation_description").val('');
+                } else {
+                    $.alert({ title: 'Chyba!', content: result.Message });
+                    //errorMsgC(result.Message);
+                }
+            })
+            .fail(function (xhr, status, error) {
+                // location.reload();
+            });
+    });
+
+    function bntBokPrevNewBookingByMaster(obj, e) {
+        e.preventDefault();
+        var day = 1;
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 1) {
+            mon = 12;
+            y = y - 1;
+        } else {
+            mon = mon - 1;
+        }
+        var CurrentDate = new Date();
+        var SelectedDate = new Date(y, mon-1, day);
+        if (SelectedDate < CurrentDate) {
+            day = CurrentDate.getUTCDate();
+            mon = CurrentDate.getUTCMonth()+1;
+            y = CurrentDate.getFullYear();
+        }
+        var dt = day + '.' + mon + '.' + y;
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(day);
+        //$("#mon").html($(this).data("day"));
+        $(".timeSel").removeClass("active");
+        $(this).toggleClass("active");
+        loadNewBookingByMasterCalendar(mon, y, @Model.MasterId, $("#new_reservation_booked__service").val(), day);
+    }
+
+    function bntBokNextNewBookingByMaster(obj, e) {
+        e.preventDefault();
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 12) {
+            mon = 1;
+            y = y + 1;
+        } else {
+            mon = mon + 1;
+        }
+        var dt = '1' + '.' + mon + '.' + y;
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(1);
+        loadNewBookingByMasterCalendar(mon, y, @Model.MasterId, $("#new_reservation_booked__service").val());
+    }
+
+    function bntBokPrevMasterChange(obj, e) {
+        e.preventDefault();
+        var day = 1;
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 1) {
+            mon = 12;
+            y = y - 1;
+        } else {
+            mon = mon - 1;
+        }
+        var CurrentDate = new Date();
+        var SelectedDate = new Date(y, mon-1, day);
+        if (SelectedDate < CurrentDate) {
+            day = CurrentDate.getUTCDate();
+            mon = CurrentDate.getUTCMonth()+1;
+            y = CurrentDate.getFullYear();
+        }
+        var dt = day + '.' + mon + '.' + y;
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(day);
+        //$("#mon").html($(this).data("day"));
+        $(".timeSel").removeClass("active");
+        $(this).toggleClass("active");
+        loadCalendarForChangeBooking(mon, y, @Model.MasterId, $("#new_reservation_booked__service").val(), day);
+    }
+
+    function bntBokNextMasterChange(obj, e) {
+        e.preventDefault();
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 12) {
+            mon = 1;
+            y = y + 1;
+        } else {
+            mon = mon + 1;
+        }
+        var dt = '1' + '.' + mon + '.' + y;
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(1);
+        loadCalendarForChangeBooking(mon, y, @Model.MasterId, $("#new_reservation_booked__service").val());
+    }
+
+    function bntBokNextMasterMove(obj, e) {
+        e.preventDefault();
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 12) {
+            mon = 1;
+            y = y + 1;
+        } else {
+            mon = mon + 1;
+        }
+        var dt = '1' + '.' + mon + '.' + y;
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(1);
+        loadCalendarForMoveByMaster(mon, y, @Model.MasterId, $("#selected__serviceId").val());
+    }
+
+    function bntBokPrevMasterMove(obj, e) {
+        e.preventDefault();
+        var day = 1;
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 1) {
+            mon = 12;
+            y = y - 1;
+        } else {
+            mon = mon - 1;
+        }
+        var CurrentDate = new Date();
+        var SelectedDate = new Date(y, mon-1, day);
+        if (SelectedDate < CurrentDate) {
+            day = CurrentDate.getUTCDate();
+            mon = CurrentDate.getUTCMonth()+1;
+            y = CurrentDate.getFullYear();
+        }
+        var dt = day + '.' + mon + '.' + y;
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(day);
+        //$("#mon").html($(this).data("day"));
+        $(".timeSel").removeClass("active");
+        $(this).toggleClass("active");
+        loadCalendarForMoveByMaster(mon, y, @Model.MasterId, $("#selected__serviceId").val(), day);
+    }
+
+    function bntBokPrevMaster(obj, e) {
+        e.preventDefault();
+        var day = 1;
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 1) {
+            mon = 12;
+            y = y - 1;
+        } else {
+            mon = mon - 1;
+        }
+        var CurrentDate = new Date();
+        var SelectedDate = new Date(y, mon-1, day);
+        if (SelectedDate < CurrentDate) {
+            day = CurrentDate.getUTCDate();
+            mon = CurrentDate.getUTCMonth()+1;
+            y = CurrentDate.getFullYear();
+        }
+        var dt = day + '.' + mon + '.' + y;
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(day);
+        //$("#mon").html($(this).data("day"));
+        $(".timeSel").removeClass("active");
+        $(this).toggleClass("active");
+        loadCalendarMaster(mon, y, @Model.MasterId, $("#new_reservation_booked__service").val(), day);
+    }
+
+    function bntBokNextMaster(obj, e) {
+        e.preventDefault();
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 12) {
+            mon = 1;
+            y = y + 1;
+        } else {
+            mon = mon + 1;
+        }
+        var dt = '1' + '.' + mon + '.' + y;
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(1);
+        loadCalendarMaster(mon, y, @Model.MasterId, $("#new_reservation_booked__service").val());
+    }
+
+    function loadCalendarMaster(m, y, master, service, day = 1) {
+        $.ajax({
+            url: '/Home/GetBookCalendarMaster?month=' + m + "&year=" + y + "&day=" + day + "&master=" + ((master === undefined || master === null) ? 0 : master) +
+                "&service=" + ((service === undefined || service === null) ? 0 : service),
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                loadSlot(master, service, m, y, day);
+                $("#dvSchedMonth").html(data);
+                if (!$("#booking-date__popup").is("show")) {
+                    // вывод окна выбора свободного времени
+                    $("#booking-date__popup").toggleClass("show");
+                }
+                $("#new_reservation__popup").toggleClass("show");
+            },
+            error: function (xhr) {
+
+            }
+        });
+    }
+
+    function MoveBooking(slotid, time, date) {
+        var data = {
+            slotid: slotid,
+            time:time,
+            date: date
+        };
+        $.post("/Master/MoveSlot", { data: data, masterId: $("#hdMaster").val() })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    successMsg(result.Message);
+                    loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                    $("#hdMovingBooking").val("");
+                }
+                else
+                {
+                    $.alert({
+                        title: 'Chyba!',
+                        content: result.Message
+                    });
+                }
+            })
+            .fail(function (xhr, status, error) {
+            });
+    }
+
+    $(document).on("click", ".mstCalNotEx", function(e) {
+        $.confirm({
+            title: '',
+            backgroundDismiss: true,
+            escapeKey: true,
+            content: 'Tento deň chýba vo vašom rozvruhu. chcete teraz otvoriť rozvrh?',
+            buttons: {
+                nie: function () {
+
+                },
+                ano: function() {
+                    location.href = '/SalonOwner/MasterSchedule/' + '@Model.MasterId';
+                }
+            }
+        });
+    });
+
+    $(document).on("click", ".free", function (e) {
+        e.preventDefault();
+
+        if ($("#hdMovingBooking").val().length > 0) {
+            return MoveBooking($("#hdMovingBooking").val(), $(this).data("time"), $("#spSchedDate").html());
+        }
+
+        Swal.fire({
+            title: '',
+            html: 'Nastaviť ako prestávku',
+            text: "",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Áno',
+            cancelButtonColor: 'gray',
+            cancelButtonText: 'Nie'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var data = {
+                    date: $("#spSchedDate").html(),
+                    time: $(this).data("time"),
+                    SalonId: $("#hdSalon").val(),
+                    MasterId: $("#hdMaster").val()
+                };
+                $.post("/Master/CloseSlot", { data: data })
+                    .done(function (result) {
+                        if (result.IsSuccess) {
+                            successMsg(result.Message);
+                            loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                        }
+                        return;
+                    })
+                    .fail(function (xhr, status, error) {
+                    });
+            }
+        });
+    });
+
+    $(".addschedclose").click(function(e) {
+        $("#booked__popup").toggleClass("show");
+    });
+
+    $(".changereservationclose").click(function (e) {
+        $("#change_reservation__popup").toggleClass("show");
+    });
+    $(".newreservationclose").click(function (e) {
+        $("#new_reservation__popup").toggleClass("show");
+    });
+    $(".newreservationClientCommentClose").click(function (e) {
+        $("#new_reservation_client_comment__popup").toggleClass("show");
+    });
+
+    $(".detschedclose").click(function(e) {
+        $("#detailbooked__popup").toggleClass("show");
+    });
+    $(".cancelbookclose").click(function(e) {
+        $("#cancelbooked__popup").toggleClass("show");
+    });
+
+    $(document).on("click", ".datecloseModal", function (e) {
+        e.preventDefault();
+        $("#new_reservation__popup").removeClass("show");
+        $("#booking-date__popup").toggleClass("show");
+
+        $("#spSchedDate_popup").val($("#spSchedDate").html());
+        $("#hdY_popup").val($("#hdY").val());
+        $("#hdM_popup").val($("#hdM").val());
+        $("#hdD_popup").val($("#hdD").val());
+    });
+
+    $(".newReservation").click(function (e) {
+        e.preventDefault();
+        $("#new_reservation__popup").toggleClass("show");
+        $("#new_reservation_booked__service").val('-1');
+        $("#new_reservation_client_name").val('');
+        $("#new_reservation_client_phone").val('');
+        $("#hdDetBookId").val(0);
+    });
+
+    $(".showFacebookPopup").click(function (e) {
+        e.preventDefault();
+        $("#facebook__popup").toggleClass("show");
+    });
+    $(".facebookPopupClose").click(function (e) {
+        $("#facebook__popup").toggleClass("show");
+    });
+
+    function bntBokPrev(obj, e) {
+        e.preventDefault();
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 1) {
+            mon = 12;
+            y = y - 1;
+        } else {
+            mon = mon - 1;
+        }
+        $("#curMonth").val(mon);
+        $("#curYear").val(y);
+        $("#curDay").val(1);
+        var dt = $("#curDay").val() + '.' + $("#curMonth").val() + '.' + $("#curYear").val();
+
+        $("#spanDay").html(dt);
+        $("#spSchedDate").html(dt);
+        $("#hdY").val(y);
+        $("#hdM").val(mon);
+        $("#hdD").val(1);
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(1);
+        $(".timeSel").removeClass("active");
+        $(this).toggleClass("active");
+
+        loadCalendar(mon, y, $("#hdMaster").val(), $("#hdService").val());
+    }
+
+    function bntBokNext(obj, e) {
+        e.preventDefault();
+        var mon = $(obj).data("month");
+        var y = $(obj).data("year");
+        if (mon == 12) {
+            mon = 1;
+            y = y + 1;
+        } else {
+            mon = mon + 1;
+        }
+        $("#curMonth").val(mon);
+        $("#curYear").val(y);
+        $("#curDay").val(1);
+        var dt = $("#curDay").val() + '.' + $("#curMonth").val() + '.' + $("#curYear").val();
+        $("#spanDay").html(dt);
+        $("#spSchedDate").html(dt);
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val(y);
+        $("#hdM_popup").val(mon);
+        $("#hdD_popup").val(1);
+        loadCalendar(mon, y, $("#hdMaster").val(), $("#hdService").val());
+    }
+
+    function loadCalendar(m, y, master, service) {  // загрузка календаря с датами на странице "Moje objednávky"
+        $.ajax({
+            url: '/Master/GetBookCalendar?month=' +
+                m +
+                "&year=" +
+                y +
+                "&master=" +
+                ((master === undefined || master === null) ? 0 : master) +
+                "&service=" +
+                ((service === undefined || service === null) ? 0 : service),
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function(data) {
+                loadSlot(master, 0, m, y, 1);
+                $("#calendar_inside").html(data);
+                loadSchedule($("#curDay").val(), $("#curMonth").val(), $("#curYear").val(), master);
+            },
+            error: function(xhr) {
+            }
+        });
+    }
+
+    function loadSlot(master, service, m, y,d) {
+        var url = '/Home/GetMasterFreeSlotsNew?ser=' + service + "&master=" + master + "&date=" + y + "-" + m + "-" + d + "&bookId=" + $("#hdDetBookId").val();
+        window.$.ajax({
+            url: url,
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function(data) {
+                window.$("#dvTimeSlots").html(data.Html);
+            },
+            error: function(xhr) {
+                alert('error');
+            }
+        });
+    }
+
+    // Переключение даты в календаре новой резервации (popup)
+    $(document).on("click", "[id^='new_booking_master_radio--']", function (event) {
+        $("#hdBookDate").val($(this).data("year") + "-" + $(this).data("month") + "-" + $(this).data("day"));
+        var dt = $(this).data("day") + '.' + $(this).data("month") + '.' + $(this).data("year");
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val($(this).data("year"));
+        $("#hdM_popup").val($(this).data("month"));
+        $("#hdD_popup").val($(this).data("day"));
+        loadMasterSlots();
+    });
+
+    // Переключение даты в календаре (popup)
+    $(document).on("click", "[id^='master_radio--']", function (event) {
+        $("#hdBookDate").val($(this).data("year") + "-" + $(this).data("month") + "-" + $(this).data("day"));
+        var dt = $(this).data("day") + '.' + $(this).data("month") + '.' + $(this).data("year");
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val($(this).data("year"));
+        $("#hdM_popup").val($(this).data("month"));
+        $("#hdD_popup").val($(this).data("day"));
+        loadMasterSlots();
+    });
+
+    function loadMasterSlots() {
+        var url = '/Home/GetMasterFreeSlotsNew?ser=' + $("#new_reservation_booked__service").val() + "&master=" + $("#hdMaster").val() + "&date=" + $("#hdBookDate").val() + "&bookId=" + $("#hdDetBookId").val();
+        var date = window.$("#hdBookDate").val();
+        $("#hdcurDay").val(date.split('-')[2]);
+        window.$.ajax({
+            url: url,
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                window.$("#dvTimeSlots").html(data.Html);
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+        });
+    }
+
+    // Nepotvrdené objednávky
+    $(document).on("click", ".notConfirmedReservations", function (e) {
+        //var dt = "-- . -- . ----";
+        $("#spanDay").html("");
+        loadNotConfirmedReservations($("#hdMaster").val());
+    });
+
+    function loadNotConfirmedReservations(master) {
+        $.ajax({
+            url: '/Master/GetNotConfirmedReservations?masterid=' + master,
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                $("#masterSchedule").html(data);
+            },
+            error: function (xhr) {
+
+            }
+        });
+    }
+
+    // Переключение даты в основном календаре
+    $(document).on("click", ".rdbt", function (e) {
+        var dt = $(this).data("day") + '.' + $(this).data("month") + '.' + $(this).data("year");
+        $("#spanDay").html(dt);
+        $("#spSchedDate").html(dt);
+        $("#hdY").val($(this).data("year"));
+        $("#hdM").val($(this).data("month"));
+        $("#hdD").val($(this).data("day"));
+        $("#spSchedDate_popup").val(dt);
+        $("#hdY_popup").val($(this).data("year"));
+        $("#hdM_popup").val($(this).data("month"));
+        $("#hdD_popup").val($(this).data("day"));
+
+        $("#curMonth").val($(this).data("month"));
+        $("#curYear").val($(this).data("year"));
+        $("#curDay").val($(this).data("day"));
+
+        loadWorkingTime($(this).data("day"), $(this).data("month"), $(this).data("year"), $("#hdMaster").val());
+
+        $(".timeSel").removeClass("active");
+        $(this).toggleClass("active");
+
+        loadSchedule($(this).data("day"), $(this).data("month"), $(this).data("year"), $("#hdMaster").val());
+    });
+
+    function loadWorkingTime(d, m, y, master) {
+        $("#WorkingTimeFrom").val("--:--");        
+        $("#WorkingTimeTo").val("--:--");
+
+        $.ajax({
+            url: '/Master/GetWorkingTimeFrom?day=' + d + '&month=' + m + "&year=" + y + '&masterId=' + master,
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                $("#WorkingTimeFrom").val(data);
+            },
+            error: function (xhr) {
+            }
+        });
+        $.ajax({
+            url: '/Master/GetWorkingTimeTo?day=' + d + '&month=' + m + "&year=" + y + '&masterId=' + master,
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                $("#WorkingTimeTo").val(data);
+            },
+            error: function (xhr) {
+            }
+        });
+    }
+
+    function loadSchedule(d, m, y, master) {
+        $.ajax({
+            url: '/Master/GetMasterDay?masterid=' + master + '&day=' + d + '&month=' + m + "&year=" + y,
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                $("#masterSchedule").html(data);
+            },
+            error: function (xhr) {
+
+            }
+        });
+    }
+
+    function backToCalendar() {
+        var masterId = $("#hdMaster").val();
+        var d = $("#hdD").val();
+        $.ajax({
+            url: '/Master/GetMasterDay?masterid=' + $("#hdMaster").val() + '&day=' + $("#hdD").val() + '&month=' + $("#hdM").val() + "&year=" + $("#hdY").val(),
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                $("#masterSchedule").html(data);
+            },
+            error: function (xhr) {
+
+            }
+        });
+    }
+
+
+    $(".cancelBook").click(function (e) {
+        var en = '@User.IsInRole(Role.Master)';
+        var sl = '@User.GetSoloMasterStatus()';
+        var sa = '@User.IsInRole(Role.SalonAdmin)';
+        if (en === 'False' && sl === 'False' && sa === 'False') {
+            return false;
+        }
+        e.preventDefault();
+        // Get days to edit
+        $.ajax({
+            url: '/Master/GetCancelDatesCalendar?month=' + $("#curMonth").val() + "&year=" + $("#curYear").val() + "&master=" + $("#hdMaster").val(),
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                $("#frmCancelBookingDays").html(data);
+                $("#cancelbooked__popup").toggleClass("show");
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+        });
+    });
+
+
+    $("#btnCancelbook").click(function (e) {
+        e.preventDefault();
+        var en = '@User.IsInRole(Role.Master)';
+        var sl = '@User.GetSoloMasterStatus()';
+        var sa = '@User.IsInRole(Role.SalonAdmin)';
+        if (en === 'False' && sl === 'False' && sa === 'False') {
+            return false;
+        }
+
+        //ckbkcanceld
+        var total = $('.wrap-inner input:checkbox:checked').length;
+        if (total <= 0) {
+            $.alert({
+                title: 'Vyberte aspoň jeden deň!',
+                content: ''
+            });
+            return;
+        }
+        Swal.fire({
+            title: '',
+            html: 'Naozaj chcete zrušiť všetky rezervácie v tieto dni? Zmena bude konečná.',
+            text: "",
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Potvrdzujem!',
+            cancelButtonText: 'Nie, nechcem',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var days = [];
+                $('input[id^="cnlBk_"]:checkbox:checked').each(function (index) {
+                    var d = new Object();
+                    var day = $(this).data("day");
+                    var mon = $(this).data("month");
+                    var year = $(this).data("year");
+                    d.Day = day;
+                    d.Month = mon;
+                    d.Year = year;
+                    days.push(d);
+                });
+
+                $.post("/Master/CancelDays", { json: JSON.stringify(days), masterId: $("#hdMaster").val() })
+                    .done(function (result) {
+                        if (result.IsSuccess) {
+                            successMsg(result.Message);
+                            $("input[id^='cnlBk_']").prop("checked", false);
+                            $("#cancelbooked__popup").toggleClass("show");
+                            loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                        }
+                        else {
+                            $.alert({
+                                title: 'Chyba!',
+                                content: result.Message
+                            });
+                        }
+                        return;
+                    })
+                    .fail(function (xhr, status, error) {
+                    });
+            }
+            if (!result.isConfirmed) {
+                $("input[id^='cnlBk_']").prop("checked", false);
+                $("#cancelbooked__popup").toggleClass("show");
+            }
+        });
+    });
+
+    $(document).on("click", ".openSlot",
+        function (e) {
+            e.preventDefault();
+
+            var en = '@User.IsInRole(Role.Master)';
+            var sl = '@User.GetSoloMasterStatus()';
+            var sa = '@User.IsInRole(Role.SalonAdmin)';
+            if (en === 'False' && sl === 'False' && sa === 'False') {
+                return false;
+            }
+
+            Swal.fire({
+                title: '',
+                html: 'Chcete otvoriť tento čas pre rezervácie?',
+                text: "",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Potvrdzujem!',
+                cancelButtonText: 'Nie, nechcem'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Master/OpenSlot?slotId='+$(this).data("slotid") + "&masterId="+$("#hdMaster").val(),
+                        datatype: "json",
+                        type: "get",
+                        contenttype: 'application/json; charset=utf-8',
+                        async: true,
+                        success: function (data) {
+                            loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                        },
+                        error: function (xhr) {
+
+                        }
+                    });
+                    loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                }
+            });
+        });
+
+
+    $(document).on("click", ".bookedSlot", function(e) {
+        e.preventDefault();
+
+        var en = '@User.IsInRole(Role.Master)';
+        var sl = '@User.GetSoloMasterStatus()';
+        var sa = '@User.IsInRole(Role.SalonAdmin)';
+        if (en === 'False' && sl === 'False' && sa === 'False') { return false; }
+
+        $("#spDetSchedDay").html($(this).data("day"));
+        $("#spDetSchedMonth").html($(this).data("month"));
+        $("#spDetSchedTime").html($(this).data("time"));
+        $("#booked__Detname").html($(this).data("name"));
+        $("#hdDetDate").val($(this).data("scheddate"));
+        var phone = $(this).data("phone");
+        if (phone[0] == '0') {
+            var telUrl = "<a href='tel:+421" + phone.substring(1, phone.length) + "'>" + $(this).data("phone") + "</a>";
+            $("#booked__Detphone").html(telUrl);
+            var phoneButtonHtml = "<a href='tel:+421" + phone.substring(1, phone.length) + "' class='btn' style='background:#4ec42c'><i aria-hidden='true'></i> Zavolať</a>";
+            $("#details_phone_button").html(phoneButtonHtml);
+        } else {
+            $("#booked__Detphone").html("");
+            $("#details_phone_button").html("");
+        }
+
+        if ($(this).data("servicename") != '.') {
+            $("#booked__Detservice").html($(this).data("servicename"));
+        } else {
+            $("#booked__Detservice").html($(this).data("comment"));
+        }
+
+        $("#selected__serviceId").val($(this).data("serviceid"));
+        $("#new_reservation_booked__service").val($(this).data("serviceid"));
+        $("#new_reservation_client_phone").val($(this).data("phone"));
+        $("#hdUserId").val($(this).data("clientid"));
+
+        $("#hdDetBookId").val($(this).data("slotid"));
+        $("#btnMoveCustomerBooking").data("slotid", $(this).data("slotid"));
+        $("#btnMoveCustomerBooking").data("time", $(this).data("time"));
+        $("#detailbooked__popup").toggleClass("show");
+        if ($(this).hasClass("confirmed")) {
+            // всплывающее окно для подтверждённой записи
+            if (!$("#btnAproveCustomerBooking").hasClass("hidden")) {
+                $("#btnAproveCustomerBooking").addClass("hidden");
+            }
+        } else {
+            // всплывающее окно для неподтверждённой записи
+            if ($("#btnAproveCustomerBooking").hasClass("hidden")) {
+                $("#btnAproveCustomerBooking").removeClass("hidden");
+            }
+        }
+
+        var clientComment = $(this).find(".poznamka-klienta").html();
+        if (clientComment) {
+            if (clientComment.length > 0) {
+                if ($("#trDetailedClientComment").hasClass("hidden"))
+                    $("#trDetailedClientComment").removeClass("hidden");
+                $("#spClientComment").html(clientComment);
+            } else {
+                $("#trDetailedClientComment").addClass("hidden");
+            }
+        } else {
+            $("#spClientComment").html("");
+            $("#trDetailedClientComment").addClass("hidden");
+        }
+
+        $("#schedDetCusAva").attr("src", $(this).data("ava"));
+    });
+
+
+    $("#btnMoveCustomerBooking").click(function (e) {   // перенос записи на другое время
+        e.preventDefault();
+
+        var en = '@User.IsInRole(Role.Master)';
+        var sl = '@User.GetSoloMasterStatus()';
+        var sa = '@User.IsInRole(Role.SalonAdmin)';
+        if (en === 'False' && sl === 'False' && sa === 'False') { return false; }
+
+        Swal.fire({
+            title: '',
+            html: 'Najozaj chcete preniesť rezeráciu na iný termín?',
+            text: "",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            denyButtonColor: '#d33',
+            cancelButtonColor: 'gray',
+            confirmButtonText: 'Potvrdzujem!',
+            cancelButtonText: 'Nie, nechcem',
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                return;
+            }
+            if (result.isConfirmed) {
+                $("#hdMovingBooking").val($(this).data("slotid"));
+
+                var masterId = $("#hdMaster").val();
+                var serviceId = $("#selected__serviceId").val();
+                var day = $("#curDay").val();
+                if (day === undefined || day === null) { day = 1; }
+                $("#hdcurDay").val(day);
+                var CurrentDate = new Date();
+                var SelectedDate = new Date($("#hdY_popup").val(), $("#hdM_popup").val() - 1, day);
+                if (SelectedDate < CurrentDate) {
+                    loadCalendarForMoveByMaster(CurrentDate.getUTCMonth() + 1, CurrentDate.getFullYear(), masterId, serviceId, CurrentDate.getUTCDate());
+                } else {
+                    loadCalendarForMoveByMaster($("#curMonth").val(), $("#curYear").val(), masterId, serviceId, day);
+                }
+            }
+        });
+    });
+
+    function loadCalendarForMoveByMaster(m, y, master, service, day = 1) {
+        $.ajax({
+            url: '/Home/GetCalendarForMoveByMaster?bookId=' + $("#hdDetBookId").val() + '&month=' + m + "&year=" + y + "&day=" + day + "&master=" + ((master === undefined || master === null) ? 0 : master) +
+                "&service=" + ((service === undefined || service === null) ? 0 : service),
+            datatype: "json",
+            type: "get",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (data) {
+                loadSlot(master, service, m, y, day);
+                $("#dvSchedMonth").html(data);
+                if (!$("#booking-date__popup").is("show")) {
+                    // вывод окна выбора свободного времени
+                    $("#booking-date__popup").toggleClass("show");
+                }
+            },
+            error: function (xhr) {
+            }
+        });
+    }
+
+    function moveBookByMasterFromPopup(obj, e) {    // завершение переноса записи мастером
+        e.preventDefault();
+        if ($("#hdTime").val() === undefined || $("#hdTime").val() === null || $("#hdTime").val().length <= 0) {
+            errorMsgC('Chyba! Vyberte čas');
+            return;
+        }
+        var data = {
+            slotid: $("#hdMovingBooking").val(),
+            time: $("#hdTime").val(),
+            date: $("#spSchedDate_popup").val(),
+            changedDate: $("#hdDetDate").val(),
+            changedTime: $("#spDetSchedTime").html().split(" - ")[0]
+        };
+        $.post("/Master/MoveSlot", { data: data, masterId: $("#hdMaster").val() })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    successMsg(result.Message);
+                    $("#booking-date__popup").toggleClass("show");
+                    $("#detailbooked__popup").removeClass("show");
+                    $(".timeSelBtn").removeClass("active");
+                    $("#hdTime").val("");
+                    $("#spSchedDate_popup").val($("#spSchedDate").html());
+                    $("#hdY_popup").val($("#hdY").val());
+                    $("#hdM_popup").val($("#hdM").val());
+                    $("#hdD_popup").val($("#hdD").val());
+
+                    // обновление текущего календаря мастера
+                    loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                    $("#hdMovingBooking").val("");
+                }
+                else {
+                    $.alert({
+                        title: 'Chyba!',
+                        content: result.Message
+                    });
+                }
+            })
+            .fail(function (xhr, status, error) {
+            });
+    }
+
+    $("#btnAproveCustomerBooking").click(function (e) {
+        e.preventDefault();
+
+        var en = '@User.IsInRole(Role.Master)';
+        var sl = '@User.GetSoloMasterStatus()';
+        var sa = '@User.IsInRole(Role.SalonAdmin)';
+        if (en === 'False' && sl === 'False' && sa === 'False') { return false; }
+
+        $.post("/Master/AproveCustomerBooking", { slotId: $("#hdDetBookId").val(), masterId: $("#hdMaster").val() })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    successMsg(result.Message);
+                    location.reload();
+                } else {
+                    errorMsg(result.Message);
+                }
+                $("#detailbooked__popup").toggleClass("show");
+            })
+            .fail(function (xhr, status, error) {
+            });
+    });
+
+    $("#bntWorkTimeTodaySave").click(function (e) {
+        e.preventDefault();
+        var en = '@User.IsInRole(Role.Master)';
+        var sl = '@User.GetSoloMasterStatus()';
+        var sa = '@User.IsInRole(Role.SalonAdmin)';
+        if (en === 'False' && sl === 'False' && sa === 'False') { return false; }
+
+        var dt = $("#curYear").val() +'-'+ $("#curMonth").val() +'-'+ $("#curDay").val();
+
+        $.post("/Master/SetWorkingTimeInCurrentDay", { curDate: dt, timeFrom: $("#WorkingTimeFrom").val(), timeTo: $("#WorkingTimeTo").val(), masterId: $("#hdMaster").val() })
+            .done(function (result) {
+                if (result.IsSuccess) {
+                    successMsg(result.Message);
+                    loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                } else {
+                    errorMsg(result.Message);
+                }
+            })
+            .fail(function (xhr, status, error) {
+            });
+    });
+
+    $("#btnCancelCustomerBooking").click(function(e) {
+        e.preventDefault();
+        var en = '@User.IsInRole(Role.Master)';
+        var sl = '@User.GetSoloMasterStatus()';
+        var sa = '@User.IsInRole(Role.SalonAdmin)';
+        if (en === 'False' && sl === 'False' && sa === 'False') {
+            return false;
+        }
+
+        Swal.fire({
+            title: '',
+            html: 'Naozaj chcete zrušiť rezerváciu?',
+            text: "",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            denyButtonColor: '#d33',
+            cancelButtonColor: 'gray',
+            confirmButtonText: 'Potvrdzujem!',
+            cancelButtonText: 'Nie, nechcem',
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            if (result.isConfirmed) {
+                $.post("/Master/CancelCustomerBooking", { slotId: $("#hdDetBookId").val(), MasterId: $("#hdMaster").val() /*data: data*/})
+                    .done(function (result) {
+                        if (result.IsSuccess) {
+                            successMsg(result.Message);
+                            loadSchedule($("#hdD").val(), $("#hdM").val(), $("#hdY").val(), $("#hdMaster").val());
+                        } else {
+                            errorMsg(result.Message);
+                        }
+                        $("#detailbooked__popup").toggleClass("show");
+                        return;
+                    })
+                    .fail(function (xhr, status, error) {
+                    });
+            }
+        });
+    });
+
+    $('#booked__phone').mask("0000-000-000", { placeholder: "09xx-xxx-xxx" });
+    $('#new_reservation_client_phone').mask("0000-000-000", { placeholder: "09xx-xxx-xxx" });
+    $('#booked__Detphone').mask("0000-000-000", { placeholder: "09xx-xxx-xxx" });
+
+    document.getElementById('WorkingTimeFromUp').addEventListener('click', function () { document.getElementById('WorkingTimeFrom').stepUp(); });
+    document.getElementById('WorkingTimeFromDown').addEventListener('click', function () { document.getElementById('WorkingTimeFrom').stepDown(); });
+    document.getElementById('WorkingTimeToUp').addEventListener('click', function () { document.getElementById('WorkingTimeTo').stepUp(); });
+    document.getElementById('WorkingTimeToDown').addEventListener('click', function () { document.getElementById('WorkingTimeTo').stepDown(); });
+
+    document.getElementById('WorkingBreakFromUp').addEventListener('click', function () { document.getElementById('workingBreakFrom').stepUp(); });
+    document.getElementById('WorkingBreakFromDown').addEventListener('click', function () { document.getElementById('workingBreakFrom').stepDown(); });
+    document.getElementById('WorkingBreakToUp').addEventListener('click', function () { document.getElementById('WorkingBreakTo').stepUp(); });
+    document.getElementById('WorkingBreakToDown').addEventListener('click', function () { document.getElementById('WorkingBreakTo').stepDown(); });
+</script>
